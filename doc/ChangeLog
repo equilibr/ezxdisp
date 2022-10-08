@@ -1,0 +1,36 @@
+Changes in ezxdisp
+------------------
+
+Changes in version 0.1.4 (28 Nov. 2007)
+	* x11/ezxdisp.c, win32/ezxdisp.c: Fixed the reuses of the loop
+	variable "i" in the case block for FLINES2D and FPOLY2D of
+	ezx_redraw().
+	
+Changes in version 0.1.3 (24 Jun. 2007)
+
+	* x11/ezxdisp.c: Added new functions to cache XAllocColor() results.
+	* win32/ezxdisp.c: Implemented ezx_next_event() and ezx_poly_3d().
+	* Added new drawing functions ezx_point_2d(), ezx_lines_2d(),
+	ezx_poly_2d(), ezx_arc_2d(), ezx_fillarc_2d(), and ezx_rect_2d().
+	* Revised declarations of 2D drawing functions.
+	* Added new function ezx_isclosed().
+	* Removed function ezx_raise_window().
+	* Improved event handling API:
+	  - introduced ezx_event_t union
+	  - support for mouse motion and window close events
+	  - EZX_BUTTON_*, EZX_KEY_*, and EZX_*MASK are defined
+	* doc/html/api_manual.html: New documentation on API usage.
+
+Changes in version 0.1.2 (21 Mar. 2005)
+
+	* x11/ezxdisp.c: Bug fixed: an inappropriate cast to
+	short instead of unsigned short for the elements of struct XColor.
+
+Changes in version 0.1.1 (06 Dec. 2004)
+
+	* x11/ezxdisp.c: Fixed a memory leak in ezx_quit().
+	* x11/ezxdisp.c: Added new function ezx_next_event().
+
+Changes in version 0.1.0 (07 Aug. 2003)
+	
+	* Initial release.

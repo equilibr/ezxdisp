@@ -1,0 +1,12 @@
+ezxdisp - yet another simple graphics library
+
+ezxdisp is a simple graphics library for 2D/3D graphical applications.
+You can use this library on x11 and win32 platforms.
+
+The latest version is available at:
+http://morihit.net/ezxdisp/
+
+For more information, please see doc/index.html.
+
+---
+Morihiko Tamai <morihi-t AT is.naist.jp>

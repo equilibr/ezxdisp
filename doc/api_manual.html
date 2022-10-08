@@ -1,0 +1,667 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<link rel="stylesheet" type="text/css" href="doc.css">
+<title>ezxdisp API Manual</title>
+</head>
+
+<body>
+
+<h1><font color="darkblue">ezxdisp</font> API Manual</h1>
+
+Last updated on June 20, 2007. <br><br>
+This document was written and is maintained 
+by Morihiko Tamai &lt;morihi-t AT is.naist.jp&gt;.
+Please contact him, if there are any
+questions/comments/suggestions regarding this document.
+
+<h2>Introduction</h2>
+
+<p>
+The ezxdisp library mainly consists of functions for creating/deleting a
+window, drawing 2D/3D objects on the window, and handling
+keyboard/mouse events. This document describes how to use these functions.
+</p>
+
+<h2>Header File and Compilation</h2>
+
+<p>
+All ezxdisp functions are declared in 'ezxdisp.h'. Your program
+should include the header.
+</p>
+
+<p>
+If 'ezxdisp.h' is in './include' directory and 'libezx.a' is in
+'./lib' directory, a typical compile command would look like this:
+</p>
+
+<h3>On a x11 platform</h3>
+<pre class="command">
+gcc -I./include foobar.c -o foobar -L./lib -lezx -lX11 -lm
+</pre>
+
+<h3>On a win32 platform (with gcc under MinGW)</h3>
+<pre class="command">
+gcc -I./include foobar.c -o foobar -L./lib -lmingw32 -lezx -mwindows
+</pre>
+
+<h2>Window Creation/Deletion</h2>
+
+<p>
+To create a new window, use <font color="blue">ezx_init()</font>. This
+function takes the width, height,
+and title of the window as its arguments, and returns a pointer to
+ezx_t structure. 
+This pointer is used in the first argument of the other ezxdisp
+functions. 
+If ezx_init() fails, NULL is returned.
+</p>
+
+<p>
+To destroy the window, use <font color="blue">ezx_quit()</font>. This function releases
+all of the resources (e.g., allocated memory) associated with the
+window and closes the window.
+</p>
+
+<p>
+Example:
+</p>
+<pre class="code">
+#include &lt;stdio.h&gt;
+#include &quot;ezxdisp.h&quot;
+
+int main(int argc, char *argv[])
+{
+  ezx_t *e;
+
+  <span class="highlight">e = ezx_init(200, 200, &quot;no title&quot;);</span>
+
+  getchar();
+
+  <span class="highlight">ezx_quit(e);</span>
+
+  return 0;  
+}
+</pre>
+
+<h2>Drawing 2D Objects</h2>
+
+<p>
+ezxdisp offers a set of functions to draw 2D graphics objects:
+</p>
+<ul>
+<li><b>Point:</b> <font color="blue">ezx_point_2d()</font></li>
+<li><b>Line:</b> <font color="blue">ezx_line_2d()</font> and <font color="blue">ezx_lines_2d()</font></li>
+<li><b>Polygon:</b> <font color="blue">ezx_poly_2d()</font></li>
+<li><b>String:</b> <font color="blue">ezx_str_2d()</font></li>
+<li><b>Rectangle:</b> <font color="blue">ezx_rect_2d()</font> and <font color="blue">ezx_fillrect_2d()</font></li>
+<li><b>Circle:</b> <font color="blue">ezx_circle_2d()</font> and <font color="blue">ezx_fillcircle_2d()</font></li>
+<li><b>Arc:</b> <font color="blue">ezx_arc_2d()</font> and <font color="blue">ezx_fillarc_2d()</font></li>
+</ul>
+
+<p>
+These functions take a pointer to ezx_color_t structure as one of its
+arguments. It is used to specify the color of the 2D object. The
+definition of the ezx_color_t structure is as follows:
+</p>
+<pre class="code">
+typedef struct {
+  double r, g, b;   <span class="comment">// red, green, and blue values of the color, they are in the range of 0.0-1.0</span>
+} ezx_color_t;
+</pre>
+
+<p>
+Also, the predefined constants are available: ezx_black,
+ezx_white, ezx_grey25, ezx_grey50, ezx_grey75, ezx_blue, ezx_red,
+ezx_green, ezx_yellow, ezx_purple, ezx_pink, ezx_cyan, ezx_brown, and ezx_orange.
+</p>
+
+<p>
+When one of the above function is called, a new <i>2D object data</i> (type of
+2D object and its parameter values) is added to the list of 2D object
+data managed by the window (without displaying the 2D object). To display all of the 2D objects added to
+the window, call <font color="blue">ezx_redraw()</font>. 
+</p>
+
+<p>
+Example:
+</p>
+<pre class="code">
+#include &lt;stdio.h&gt;
+#include &quot;ezxdisp.h&quot;
+
+int main(int argc, char *argv[])
+{
+  ezx_t *e;
+  
+  e = ezx_init(200, 200, &quot;no title&quot;);
+
+  <span class="highlight">ezx_line_2d(e, 0, 0, 200, 200, &amp;ezx_red, 1);</span>
+  <span class="highlight">ezx_circle_2d(e, 50, 100, 20, &amp;ezx_black, 1);</span>
+  <span class="highlight">ezx_fillrect_2d(e, 120, 40, 170, 160, &amp;ezx_blue);</span>
+
+  <span class="highlight">ezx_redraw(e);</span>
+
+  getchar();
+  
+  ezx_quit(e);
+  
+  return 0;  
+}
+</pre>
+
+<p>
+To remove all of the 2D object data added to the window, call <font color="blue">ezx_wipe()</font>.
+</p>
+
+<p>
+Example:
+</p>
+<pre class="code">
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &quot;ezxdisp.h&quot;
+
+int main(int argc, char *argv[])
+{
+  ezx_t *e;
+  int width=200, height=200;
+
+  e = ezx_init(width, height, &quot;no title&quot;);
+
+  for (;;) {
+    <span class="highlight">ezx_wipe(e);</span>
+    ezx_fillcircle_2d(e, rand()%width, rand()%height, 10, &amp;ezx_blue);
+    ezx_redraw(e);
+  }
+}
+</pre>
+
+<h2>Layers</h2>
+
+<p>
+Each window has multiple layers, and each layer manages its own list
+of 2D object data (Fig. 1). 
+</p>
+
+<center>
+<img alt="2D object data managed by layers" src="images/layer.png"><br>
+Fig. 1 2D object data managed by layers.
+</center>
+
+<p>
+When one of the drawing function (e.g., ezx_line_2d())
+called, its 2D object data is added to the list of the 2D object data
+managed by the <i>current layer</i>. To change the current layer, use
+<font color="blue">ezx_select_layer()</font>, which takes the layer number you want to select.
+Note that when ezx_init() function returns, the layer 0 is implicitly set as
+the current layer. There are 8 layers available (this number is
+defined in ezxdisp.h as EZX_NLAYERS).
+</p>
+
+<p>
+We can use <font
+color="blue">ezx_wipe_layer()</font> to remove all of the 2D object
+data managed by a specific layer.
+</p>
+
+<p>
+Example:
+</p>
+<pre class="code">
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &quot;ezxdisp.h&quot;
+
+int main(int argc, char *argv[])
+{
+  ezx_t *e;
+  int width=200, height=200;
+
+  e = ezx_init(width, height, &quot;no title&quot;);
+
+  ezx_line_2d(e, 0, 0, width, height, &amp;ezx_grey50, 1);
+  ezx_line_2d(e, 0, height, width, 0, &amp;ezx_grey50, 1);
+
+  <span class="highlight">ezx_select_layer(e, 1);</span>
+
+  for (;;) {
+    <span class="highlight">ezx_wipe_layer(e, 1);</span>
+    ezx_fillcircle_2d(e, rand()%width, rand()%height, 10, &amp;ezx_blue);
+    ezx_redraw(e);
+  }
+}
+</pre>
+
+<h2>Event Handling</h2>
+
+<p>
+Each window maintains an event queue which is composed of a series of
+<i>event data</i> (event type and specific information based on the type) which are generated by events occurred in the
+window. The supported event types are mouse button press/release
+event, keyboard press/release event, mouse motion event, and window
+close event.  Note that mouse motion events occur if and only if any
+mouse button is pressed (i.e., while dragging the mouse).
+</p>
+
+<p>
+To catch mouse button press events, use <font
+color="blue">ezx_pushbutton()</font>. This function returns the
+button code pressed and sets the x-y
+coordinates of the mouse pointer to the variables 
+passed as arguments. The button code is one of EZX_BUTTON_LEFT, EZX_BUTTON_MIDDLE, EZX_BUTTON_RIGHT,
+EZX_BUTTON_WHEELUP, or EZX_BUTTON_WHEELDOWN. 
+If there is no event data generated by button press event in the event
+queue, this function blocks until the next button press event occurs.
+</p>
+
+<p>
+Example:
+</p>
+<pre class="code">
+#include &lt;stdio.h&gt;
+#include &quot;ezxdisp.h&quot;
+
+int main(int argc, char *argv[])
+{
+  ezx_t *e;
+  int b, x, y;
+  
+  e = ezx_init(200, 200, &quot;no title&quot;);
+
+  for (;;) {
+    <span class="highlight">b = ezx_pushbutton(e, &amp;x, &amp;y);</span>
+    if (b == EZX_BUTTON_LEFT) break;
+  }
+
+  printf(&quot;The left button was pressed at the location (%d,%d).\n&quot;, x, y);
+
+  ezx_quit(e);
+
+  return 0;
+}
+</pre>
+
+<p>
+More general event handling can be achieved by using
+<font color="blue">ezx_next_event()</font>. This function removes the next event data from the event
+queue and stores it to the variable of ezx_event_t union which is passed as
+one of its arguments. If there is no event data in the event queue,
+this function blocks until the next event occurs. The event type
+is identified by the <i>type</i> field of ezx_event_t union.
+To access the event specific information, the following
+fields are available depending on the event type.
+</p>
+
+<ul>
+<li>Mouse button press/release event
+<ul>
+<li><b>type:</b> EZX_BUTTON_PRESS or EZX_BUTTON_RELEASE</li>
+<li><b>button.b: </b> the mouse button code</li>
+<li><b>button.x, button.y: </b> the x-y coordinates of the mouse pointer</li>
+<li><b>button.state: </b> the key or button mask</li>
+</ul>
+</li>
+<li>Keyboard press/release event
+<ul>
+<li><b>type:</b> EZX_KEY_PRESS or EZX_KEY_RELEASE</li>
+<li><b>key.k: </b> the key code</li>
+<li><b>key.x, key.y: </b> the x-y coordinates of the mouse pointer</li>
+<li><b>key.state: </b> the key or button mask</li>
+</ul>
+</li>
+<li>Mouse motion event
+<ul>
+<li><b>type:</b> EZX_MOTION_NOTIFY</li>
+<li><b>motion.x, motion.y:</b> the x-y coordinates of the mouse pointer</li>
+<li><b>motion.state:</b> the key or button mask</li>
+</ul>
+</li>
+<li>Window close event
+<ul>
+<li><b>type:</b> EZX_CLOSE</li>
+</ul>
+</li>
+</ul>
+
+<p>
+The mouse button code takes the same values as the return value
+of ezx_pushbutton() (described above). The key code is an ascii code or one
+of EZX_KEY_HOME, EZX_KEY_LEFT, EZX_KEY_UP,
+EZX_KEY_RIGHT, or EZX_KEY_DOWN.
+The button.state, key.state, and motion.state fields indicate the state
+(pressed or not) of the shift and control keys and
+the mouse buttons when the event occurred, which are
+the bitwise inclusive OR of one or more of the key or button masks:
+EZX_SHIFT_MASK, EZX_CONTROL_MASK, EZX_BUTTON_LMASK, EZX_BUTTON_MMASK,
+and EZX_BUTTON_RMASK.
+</p>
+
+<p>
+Example:
+</p>
+<pre class="code">
+#include &lt;stdio.h&gt;
+#include &quot;ezxdisp.h&quot;
+
+int main(int argc, char *argv[])
+{
+  ezx_t *e;
+  ezx_event_t event;
+  
+  e = ezx_init(200, 200, &quot;no title&quot;);
+
+  for (;;) {
+    <span class="highlight">ezx_next_event(e, &amp;event);</span>
+    switch (event.type) {
+    case EZX_BUTTON_PRESS:
+    case EZX_BUTTON_RELEASE:
+      printf(&quot;button event (b=%d)\n&quot;, event.button.b);
+      break;
+    case EZX_KEY_PRESS:
+    case EZX_KEY_RELEASE:
+      printf(&quot;key event (k=%d)\n&quot;, event.key.k);
+      break;
+    case EZX_MOTION_NOTIFY:
+      printf(&quot;mouse motion event (x=%d, y=%d)\n&quot;, event.motion.x, event.motion.y);
+      break;
+    case EZX_CLOSE:
+      ezx_quit(e);
+      return 0;
+    }
+  }
+}
+</pre>
+
+<h2>Misc. Functions</h2>
+
+<ul>
+<li>To set the background color of the window, use <font color="blue">ezx_set_background()</font>, which
+takes a pointer to ezx_color_t structure.</li>
+<li>To set the title of the window, use <font color="blue">ezx_window_name()</font>.</li>
+<li>To get the current x-y coordinates of the mouse pointer, use
+<font color="blue">ezx_sensebutton()</font>. This function stores the
+x-y coordinates of the mouse pointer to the variables passed as
+arguments. The return value of the function is the key or button mask,
+which takes the same value as the button.state field of the
+ezx_event_t union returned by ezx_next_event() (described above).</li>
+<li>To check if the close button of the window was pressed, use <font color="blue">ezx_isclosed()</font>,
+which returns 1 if it was pressed and 0 otherwise.</li>
+</ul>
+
+<h2>Drawing 3D Objects</h2>
+
+<p>
+Sorry, not documented yet...
+</p>
+
+<h2>API Reference for Basic Operations</h2>
+
+<h3>EZX_NLAYER - the number of layers</h3>
+<pre class="synopsis">
+#define EZX_NLAYER 8
+</pre>
+
+<h3>ezx_t - represents a window managed by ezxdisp library</h3>
+<pre class="synopsis">
+typedef struct ezx_s ezx_t;
+</pre>
+<p>
+ezx_t is an opaque data type.
+</p>
+
+<h3>ezx_color_t - represents a color with red, green, and blue components</h3>
+<pre class="synopsis">
+typedef struct {
+  double r, g, b;   <span class="highlight">// red, green, and blue values of the color, they are in the range of 0.0-1.0</span>
+} ezx_color_t;
+</pre>
+<p>
+The following predefined colors are available: ezx_black,
+ezx_white, ezx_grey25, ezx_grey50, ezx_grey75, ezx_blue, ezx_red,
+ezx_green, ezx_yellow, ezx_purple, ezx_pink, ezx_cyan, ezx_brown, and ezx_orange.
+</p>
+
+<h3>ezx_event_t - stores detailed information about an event</h3>
+<pre class="synopsis">
+typedef union {
+  enum ezx_event_type {
+    EZX_BUTTON_PRESS,
+    EZX_BUTTON_RELEASE,
+    EZX_KEY_PRESS,
+    EZX_KEY_RELEASE,
+    EZX_MOTION_NOTIFY,
+    EZX_CLOSE
+  } type;
+  
+  struct ezx_button_event {
+    enum ezx_event_type type; <span class="comment">/* EZX_BUTTON_PRESS or EZX_BUTTON_RELEASE */</span>
+    unsigned int b;
+    int x, y;
+    unsigned int state;
+  } button;
+  
+  struct ezx_key_event {
+    enum ezx_event_type type; <span class="comment">/* EZX_KEY_PRESS or EZX_KEY_RELEASE */</span>
+    unsigned int k; 
+    int x, y;
+    unsigned int state;
+  } key;
+  
+  struct ezx_motion_event {
+    enum ezx_event_type type; <span class="comment">/* EZX_MOTION_NOTIFY */</span>
+    int x, y;
+    unsigned int state;
+  } motion;
+} ezx_event_t;
+</pre>
+<ul>
+<li><b>button.b:</b> is one of EZX_BUTTON_LEFT, EZX_BUTTON_MIDDLE,
+    EZX_BUTTON_RIGHT, EZX_BUTTON_WHEELUP, or EZX_BUTTON_WHEELDOWN.</li>
+<li><b>key.k:</b> is an ascii code or one of EZX_KEY_HOME,
+    EZX_KEY_LEFT, EZX_KEY_UP, EZX_KEY_RIGHT, or EZX_KEY_DOWN.</li>
+<li><b>button.state, key.state, motion.state:</b> is a bitwise
+    inclusive OR of any combination of EZX_SHIFT_MASK,
+    EZX_CONTROL_MASK, EZX_BUTTON_LMASK, EZX_BUTTON_MMASK, and EZX_BUTTON_RMASK.</li>
+</ul>
+
+<h3>ezx_init() - creates a new window</h3>
+<pre class="synopsis">
+ezx_t *ezx_init(int size_x, int size_y, char *window_name);
+</pre>
+<ul>
+<li><b>size_x, size_y:</b> specify the width and height of the window.</li>
+<li><b>window_name:</b> specifies the title of the window.</li>
+<li><b>returns:</b> a pointer to the newly-allocated ezx_t
+structure, or NULL if the function fails.
+</ul>
+
+<div>
+<h3>ezx_quit() - destroys the specified window</h3>
+</div>
+<pre class="synopsis">
+void ezx_quit(ezx_t *e);
+</pre>
+
+<h3>ezx_set_background() - sets the background color</h3>
+<pre class="synopsis">
+void ezx_set_background(ezx_t *e, const ezx_color_t *col);
+</pre>
+<ul>
+<li><b>col:</b> specifies the background color.
+</ul>
+
+<h3>ezx_redraw() - redraws all of the graphics in the window</h3>
+<pre class="synopsis">
+void ezx_redraw(ezx_t *e);
+</pre>
+
+<h3>ezx_wipe() - removes all of the graphics in the window</h3>
+<pre class="synopsis">
+void ezx_wipe(ezx_t *e);
+</pre>
+
+<h3>ezx_select_layer() - sets the current layer</h3>
+<pre class="synopsis">
+void ezx_select_layer(ezx_t *e, int lay);
+</pre>
+<ul>
+<li><b>lay:</b> specifies the layer number in the range [0..7].
+</ul>
+
+<h3>ezx_wipe_layer() - removes all of the graphics on a layer</h3>
+<pre class="synopsis">
+void ezx_wipe_layer(ezx_t *e, int lay);
+</pre>
+<ul>
+<li><b>lay:</b> specifies the layer number in the range [0..7].
+</ul>
+
+<h3>ezx_window_name() - sets the title of the window</h3>
+<pre class="synopsis">
+void ezx_window_name(ezx_t *e, char *window_name);
+</pre>
+<ul>
+<li><b>window_name:</b> specifies the title of the window.
+</ul>
+
+<h3>ezx_isclosed() - tests if the close button of the window was pressed</h3>
+<pre class="synopsis">
+int ezx_isclosed(ezx_t *e);
+</pre>
+
+<h3>ezx_sensebutton() - gets the current coordinates of the mouse pointer</h3>
+<pre class="synopsis">
+int ezx_sensebutton(ezx_t *e, int *x, int *y);
+</pre>
+<ul>
+<li><b>x, y:</b> return the current x-y coordinates of the mouse
+pointer.</li>
+<li><b>returns:</b> the state of the mouse buttons and
+shift/control keys, which takes the same value as the button.state field of
+ezx_event_t.</li>
+</ul>
+
+<h3>ezx_pushbutton() - waits for a mouse button to be pressed</h3>
+<pre class="synopsis">
+int ezx_pushbutton(ezx_t *e, int *x, int *y);
+</pre>
+<ul>
+<li><b>x, y:</b> return the x-y coordinates at which
+the mouse button was pressed.</li>
+<li><b>returns:</b> which mouse button was pressed.</li>
+</ul>
+
+<h3>ezx_next_event() - waits for an event occurs</h3>
+<pre class="synopsis">
+void ezx_next_event(ezx_t *ezx, ezx_event_t *event);
+</pre>
+<ul>
+<li><b>event:</b> returns the data of the next event.</li>
+</ul>
+
+<h2>API Reference for 2D Drawing Functions</h2>
+
+<h3>ezx_point2d_t - represents x-y coordinates of a point</h3>
+<pre class="synopsis">
+typedef struct {
+  int x, y;
+} ezx_point2d_t;
+</pre>
+
+<h3>ezx_point_2d() - draws a point</h3>
+<pre class="synopsis">
+void ezx_point_2d(ezx_t *e, int x, int y, const ezx_color_t *col);
+</pre>
+<ul>
+<li><b>x, y:</b> specify the x-y coordinates of the point to be drawn.</li>
+</ul>
+
+<h3>ezx_line_2d() - draws a line</h3>
+<pre class="synopsis">
+void ezx_line_2d(ezx_t *e, int x0, int y0, int x1, int y1, const ezx_color_t *col, int width);
+</pre>
+<ul>
+<li><b>x0, y0, x1, y1:</b> specify the points (x0, y0) and (x1, y1) to
+be connected.</li>
+<li><b>width:</b> specifies the line width.</li>
+</ul>
+
+<h3>ezx_lines_2d() - draws a series of lines connecting the given points</h3>
+<pre class="synopsis">
+void ezx_lines_2d(ezx_t *e, ezx_point2d_t *points, int npoints, const ezx_color_t *col, int width);
+</pre>
+<ul>
+<li><b>points:</b> specifies an array of points.</li>
+<li><b>npoints:</b> specifies the number of points.</li>
+<li><b>width:</b> specifies the line width.</li>
+</ul>
+
+<h3>ezx_poly_2d() - draws a polygon</h3>
+<pre class="synopsis">
+void ezx_poly_2d(ezx_t *e,ezx_point2d_t *points, int npoints, const ezx_color_t *col);
+</pre>
+<ul>
+<li><b>points:</b> specifies an array of points.</li>
+<li><b>npoints:</b> specifies the number of points.</li>
+</ul>
+
+<h3>ezx_str_2d() - draws a string</h3>
+<pre class="synopsis">
+void ezx_str_2d(ezx_t *e, int x, int y, char *str, const ezx_color_t *col);
+</pre>
+<ul>
+<li><b>x, y:</b> specify the x-y coordinates of the origin of
+the string.</li>
+<li><b>str:</b> specifies the string drawn.</li>
+</ul>
+
+<h3>ezx_rect_2d(), ezx_fillrect_2d() - draws a rectangle (outline or filled)</h3>
+<pre class="synopsis">
+void ezx_rect_2d(ezx_t *e, int x0, int y0, int x1, int y1, const ezx_color_t *col, int width);
+void ezx_fillrect_2d(ezx_t *e, int x0, int y0, int x1, int y1, const ezx_color_t *col);
+</pre>
+<ul>
+<li><b>x0, y0:</b> specify the x-y coordinates of the upper-left
+corner of the rectangle.</li>
+<li><b>x1, y1:</b> specify the x-y coordinates of the
+lower-right corner of the rectangle.</li>
+<li><b>width:</b> specifies the line width.</li>
+</ul>
+
+<h3>ezx_circle_2d(), ezx_fillcircle_2d() - draws a circle (outline or filled)</h3>
+<pre class="synopsis">
+void ezx_circle_2d(ezx_t *e, int x, int y, int r, const ezx_color_t *col, int width);
+void ezx_fillcircle_2d(ezx_t *e, int x, int y, int r, const ezx_color_t *col);
+</pre>
+<ul>
+<li><b>x, y:</b> specify the x-y coordinates of the center of
+the circle.</li>
+<li><b>r:</b> specifies the radius of the circle.</li>
+<li><b>width:</b> specifies the line width.</li>
+</ul>
+
+<h3>ezx_arc_2d(), ezx_fillarc_2d() - draws an arc (outline or filled)</h3>
+<pre class="synopsis">
+void ezx_arc_2d(ezx_t *e, int x, int y, int w, int h, double angle1, double angle2, const ezx_color_t *col, int width);
+void ezx_fillarc_2d(ezx_t *e, int x, int y, int w, int h, double angle1, double angle2, const ezx_color_t *col);
+</pre>
+<ul>
+<li><b>x, y:</b> specify the x-y coordinates of the center of
+the arc.</li>
+<li><b>w, h:</b> specify the width and height of the arc.</li>
+<li><b>angle1:</b> specifies the beginning angle of the arc measured
+in degrees relative to the three o'clock position.</li>
+<li><b>angle2:</b> specifies the angular extent of the arc measured in
+degrees from the beginning angle, in the counterclockwise
+direction.</li>
+<li><b>width:</b> specifies the line width.</li>
+</ul>
+
+<br>
+<hr class="end">
+<div align="right"><a href="index.html">Home</a></div>
+
+</body>
+</html>

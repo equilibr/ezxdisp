@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<meta name="keywords" content="ezxdisp">
+<link rel="stylesheet" type="text/css" href="doc.css">
+<title>ezxdisp - yet another simple graphics library</title>
+</head>
+
+<body>
+
+<h1><font color="darkblue">
+ezxdisp</font> - yet another simple graphics library</h1><br>
+
+<h2>Introduction</h2>
+
+<p>
+ezxdisp is a simple graphics
+library in C that works on X11 and Win32 platforms.
+This library has a small set of
+functions for drawing 2D/3D graphics.
+For example, the following code will create a 200x200 window with white
+background, and will draw a red circle in the center of the window.
+</p>
+
+<pre class="code">
+#include &lt;stdio.h&gt;
+#include &quot;ezxdisp.h&quot;
+
+int main(int argc, char *argv[])
+{
+  ezx_t *e;
+
+  e = ezx_init(200, 200, &quot;no title&quot;);
+  ezx_set_background(e, &amp;ezx_white);
+  ezx_fillcircle_2d(e, 100, 100, 40, &amp;ezx_red);
+  ezx_redraw(e);
+  ezx_pushbutton(e, NULL, NULL);
+  ezx_quit(e);
+
+  return 0;  
+}
+</pre>
+
+<h2>News</h2>
+
+<ul>
+<li><b>2007-11-28</b> - ezxdisp-0.1.4 released [<a href="ChangeLog">ChangeLog</a>].
+<ul><li>
+This release fixes a bug that caused ezx_redraw() not to display
+some graphics objects if any line or polygon objects created
+by ezx_lines_2d() or ezx_poly_2d() exist.
+</li></ul>
+</li>
+<li><b>2007-06-24</b> - ezxdisp-0.1.3 released.
+<ul><li>
+This release includes a major enhancement of event handling API,
+new 2D drawing functions, and new
+documentation on API usage. There are also small API changes to remove
+unused arguments in drawing functions.
+</li></ul>
+</li>
+<li><b>2005-03-21</b> - ezxdisp-0.1.2 released.
+<ul><li>
+This release fixes a bug that caused incorrect colors to be
+displayed on some X11-based platforms.
+</li></ul>
+</li>
+<li><b>2004-12-06</b> - ezxdisp-0.1.1 released.
+<ul><li>
+This release fixes memory leakage and adds a new function
+'ezx_next_event', which is currently only available for the X11
+platform.
+</li></ul>
+</li>
+<li><b>2003-08-07</b> - ezxdisp-0.1.0 released.</li>
+</ul>
+
+<h2>Download</h2>
+
+<p>
+ezxdisp is a free software under the terms
+of the <a href="http://www.gnu.org/copyleft/lesser.html">
+GNU Lesser General Public License version 2</a>.
+</p>
+
+<ul>
+<li>
+<a
+href="http://morihit.net/ezxdisp/ezxdisp-0.1.4.tar.gz">ezxdisp-0.1.4.tar.gz</a>
+</li>
+</ul>
+
+<h2>Screenshots</h2>
+
+<p>
+Some screenshots are available <a href="screenshots.html">here</a>.
+</p>
+
+<h2>Building the Library</h2>
+
+<p>
+The ezxdisp package does not contain a configure script, but does
+contain the platform-specific Makefiles for building a static library
+named libezx.a.
+</p>
+
+<h3>On a x11 platform</h3>
+
+<p>
+To build libezx.a, run 'make' in the 'src/x11' directory.
+</p>
+
+<h3>On a win32 platform</h3>
+
+<p>
+You need to install <a href="http://www.mingw.org/">MinGW and
+MSYS</a>. To build libezx.a, run 'make' in the 'src/win32' directory.
+</p>
+
+<h2>Documentation</h2>
+
+<ul>
+<li><a href="api_manual.html">API Manual</a></li>
+</ul>
+
+<h2>Sample Codes</h2>
+
+<p>
+There are sample codes in the 'samples' directory.
+These samples can be built by running 'make samples' in the 'src/x11' or
+'src/win32' directory.
+</p>
+
+<h2>Contact</h2>
+
+<p>
+ezxdisp is currently maintained by
+<a href="http://morihit.net/">Morihiko Tamai</a> &lt;morihi-t AT is.naist.jp&gt;.
+Please feel free to send bug reports, suggestions, or comments on
+ezxdisp library.
+</p>
+
+<h2>Related Links</h2>
+
+<ul>
+ <li><a href="http://www.call-with-current-continuation.org/">
+ The CHICKEN Scheme Compiler</a><br>
+ CHICKEN is a compiler for the Scheme programming language.
+ An extension library to use ezxdisp from CHICKEN is available from:
+ <a href="http://www.call-with-current-continuation.org/eggs/ezxdisp.html">http://www.call-with-current-continuation.org/eggs/index.html</a>.
+ </li>
+ <li><a href="http://www.libsdl.org/">Simple DirectMedia
+ Layer</a><br>
+ SDL is a cross-platform multimedia library. Its source code was very helpful in
+ developing the win32 version of ezxdisp.
+ </li>
+</ul>
+
+<hr class="end">
+<div align="right">
+Last modified:
+Wed Nov 28 21:50:40 UTC 2007
+<!--
+Sun Jun 24 09:18:14 JST 2007
+Tue Mar 22 03:33:52 JST 2005
+-->
+</div>
+
+</body>
+</html>
