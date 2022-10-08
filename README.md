@@ -36,7 +36,7 @@ Just while we are here, below is copied in screenshot page from the website:
 
 <kbd>![origin/3d_clock.png](origin/3d_clock.png)</kbd>  
 
-<kbd>![Peek_2022-10-08_23-05.gif](Peek_2022-10-08_23-05.gif)<kbd>
+<kbd>![origin/Peek_2022-10-08_23-05.gif](origin/Peek_2022-10-08_23-05.gif)<kbd>
 
 ### A Clone of the xengine
 
