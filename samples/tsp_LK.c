@@ -683,7 +683,6 @@ int main(int argc, char *argv[])
   int mouse_x, mouse_y;
   int x1, y1;
   int i, j;
-  int root[NCITY];
 
   //
 
@@ -723,7 +722,6 @@ int main(int argc, char *argv[])
 
     ezx_redraw(e);
 
-    root[i] = i;
 
     if (i >= 8 && b == 3)
       break;

@@ -22,7 +22,6 @@
 
 static const ezx_color_t color_piston = {0.745,0.745,0.745};
 static const ezx_color_t color_shaft = {0.125,0.698,0.667};
-static const ezx_color_t color_cylinder = {0.412,0.412,0.412};
 static const ezx_color_t color_roter = {0.133,0.545,0.133};
 static const ezx_color_t color_back = {0.000,0.000,0.000};
 static const ezx_color_t color_dep = {1.000,0.000,0.000};
@@ -58,7 +57,6 @@ static int draw_engine(ezx_t *e, char *rpm)
   double angle, theta;
   double piston_x1, piston_y1;
   double piston_x2, piston_y2;
-  double base_x, base_y;
 
   sw ^= 1;
 
@@ -73,8 +71,6 @@ static int draw_engine(ezx_t *e, char *rpm)
     ezx_wipe(e);
     
     /* Draw heat sink */
-    base_x = width*0.35;
-    base_y = height*0.3;
     fillrect(e, width*0.35, height*0.3,  width*0.3, height*0.02, &color_engine);
     fillrect(e, width*0.35, height*0.35, width*0.3, height*0.02, &color_engine);
     fillrect(e, width*0.35, height*0.4,  width*0.3, height*0.02, &color_engine);
