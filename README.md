@@ -12,7 +12,7 @@ Building instructions, documentation, screenshots, ... on the website linked to 
 
 No updates for 15 years, but this library is still good for what it was built for.  
 This repo should just make it easier to clone/fork.  
-Only [ezxdisp-0.1.4/](ezxdisp-0.1.4/), [LICENSE](LICENSE), [origin/](origin/) an [README.md](README.md) added to original.
+Only [ezxdisp-0.1.4/](ezxdisp-0.1.4/), [LICENSE](LICENSE), [origin/](origin/), [README.md](README.md) and (top level) [Makefile](Makefile) added to original.
 
 Just while we are here, below is copied in screenshot page from the website:  
 [http://morihit.net/ezxdisp/screenshots.html](http://morihit.net/ezxdisp/screenshots.html)  
