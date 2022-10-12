@@ -10,6 +10,12 @@
 
 #include "ezxdisp.h"
 
+#if defined(__cplusplus)
+#define elt(e) life_t::e
+#else
+#define elt(e) e
+#endif
+
 typedef struct {
   enum {
     NORMAL,
@@ -24,12 +30,12 @@ typedef struct {
 
 static void life_evaluate_next_state(life_t *life, int num_neighbors)
 {
-  if (life->type == NORMAL) {
+  if (life->type == elt(NORMAL)) {
     if (num_neighbors == 2) {
-      if (life->state == ALIVE) life->next_state = ALIVE;
-      else life->next_state = DEAD;
-    } else if (num_neighbors == 3) life->next_state = ALIVE;
-    else life->next_state = DEAD;
+      if (life->state == elt(ALIVE)) life->next_state = elt(ALIVE);
+      else life->next_state = elt(DEAD);
+    } else if (num_neighbors == 3) life->next_state = elt(ALIVE);
+    else life->next_state = elt(DEAD);
   }
 }
 
@@ -61,18 +67,18 @@ int main(int argc, char *argv[])
 
   e = ezx_init(width, height, "Conway's Game of Life");
 
-  life = malloc(sizeof(life_t *) * nrow);
-  for (i = 0; i < nrow; i++) life[i] = calloc(1, sizeof(life_t) * ncol);
+  life = (life_t**) malloc(sizeof(life_t *) * nrow);
+  for (i = 0; i < nrow; i++) life[i] = (life_t*) calloc(1, sizeof(life_t) * ncol);
 
   for (i = 0; i < nrow; i++) {
     for (j = 0; j < ncol; j++) {
       if (i == 0 || j == 0 || i == nrow-1 || j == ncol-1) {
-	life[i][j].type = DUMMY;
-	life[i][j].state = DEAD;
+	life[i][j].type = elt(DUMMY);
+	life[i][j].state = elt(DEAD);
       } else {
-	life[i][j].type = NORMAL;
-	life[i][j].state = rand()%2;
-	if (life[i][j].state == ALIVE) update_num_neighbors(life, i, j);
+	life[i][j].type = elt(NORMAL);
+	life[i][j].state = (rand()%2) ? elt(ALIVE) : elt(DEAD);
+	if (life[i][j].state == elt(ALIVE)) update_num_neighbors(life, i, j);
       }
     }
   }
@@ -90,7 +96,7 @@ int main(int argc, char *argv[])
     for (i=1, y=0; i<nrow-1; i++, y+=cell_height) { 
       for (j=1, x=0; j<ncol-1; j++, x+=cell_width) {
 	life[i][j].state = life[i][j].next_state;
-	if (life[i][j].state == ALIVE) {
+	if (life[i][j].state == elt(ALIVE)) {
 	  update_num_neighbors(life, i, j);
 	  ezx_fillrect_2d(e, x, y, x+cell_width, y+cell_height, &ezx_blue);	  
 	}

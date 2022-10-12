@@ -6,6 +6,14 @@
 #ifndef _EZXDISP_H_
 #define _EZXDISP_H_
 
+#if defined(__cplusplus)
+extern "C" {
+#define eet(e) ezx_event_t::e
+#else
+#define eet(e) e
+#endif
+
+
 #ifdef WIN32
 #define main ezx_main
 #endif
@@ -128,5 +136,9 @@ void ezx_poly_3d(ezx_t *e, ezx_point3d_t *points, double hx, double hy,
 		 double hz, int npoints, const ezx_color_t *col);
 void ezx_circle_3d(ezx_t *e, double x0, double y0, double z0, double r,
 		   const ezx_color_t *col);
+
+#if defined(__cplusplus)
+}
+#endif
 
 #endif

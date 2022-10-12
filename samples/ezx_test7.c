@@ -15,27 +15,27 @@ int main(int argc, char *argv[])
     
     ezx_next_event(e, &ev);
     switch (ev.type) {
-    case EZX_BUTTON_PRESS:
+    case eet(EZX_BUTTON_PRESS):
       fprintf(stderr,"button pressed (b=%d, state=%d)\n",
 	      ev.button.b, ev.button.state);
       break;
-    case EZX_BUTTON_RELEASE:
+    case eet(EZX_BUTTON_RELEASE):
       fprintf(stderr,"button released (b=%d, state=%d)\n",
 	      ev.button.b, ev.button.state);
       break;
-    case EZX_KEY_PRESS:
+    case eet(EZX_KEY_PRESS):
       fprintf(stderr,"key pressed (k=%d, state=%d)\n",
 	      ev.key.k, ev.key.state);
       break;
-    case EZX_KEY_RELEASE:
+    case eet(EZX_KEY_RELEASE):
       fprintf(stderr,"key released (k=%d, state=%d)\n",
 	      ev.key.k, ev.key.state);
       break;
-    case EZX_MOTION_NOTIFY:
+    case eet(EZX_MOTION_NOTIFY):
       fprintf(stderr,"pointer moved (x=%d, y=%d, state=%d)\n",
 	      ev.motion.x, ev.motion.y, ev.motion.state);
       break;
-    case EZX_CLOSE:
+    case eet(EZX_CLOSE):
       fprintf(stderr,"window closed\n");
       closed = 1;
       break;

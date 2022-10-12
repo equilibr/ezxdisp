@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 
     ezx_next_event(e, &ev);
     switch (ev.type) {
-    case EZX_BUTTON_PRESS:
+    case eet(EZX_BUTTON_PRESS):
       if (ev.button.b == EZX_BUTTON_LEFT &&
 	  rect.x0 <= ev.button.x && ev.button.x <= rect.x0+rect.w &&
 	  rect.y0 <= ev.button.y && ev.button.y <= rect.y0+rect.h) {
@@ -42,25 +42,25 @@ int main(int argc, char *argv[])
 	h0 = ev.button.y - rect.y0;
       }
       break;
-    case EZX_BUTTON_RELEASE:
+    case eet(EZX_BUTTON_RELEASE):
       if (ev.button.b == EZX_BUTTON_LEFT &&
 	  rect.x0 <= ev.button.x && ev.button.x <= rect.x0+rect.w &&
 	  rect.y0 <= ev.button.y && ev.button.y <= rect.y0+rect.h)
 	moving = 0;
       break;
-    case EZX_KEY_PRESS:
+    case eet(EZX_KEY_PRESS):
       if (ev.key.k == EZX_KEY_HOME) {
 	rect.x0 = 100;
 	rect.y0 = 100;
       } else if (ev.key.k == 'q') quit = 1;
       break;
-    case EZX_MOTION_NOTIFY:
+    case eet(EZX_MOTION_NOTIFY):
       if (moving) {
 	rect.x0 = ev.motion.x - w0;
 	rect.y0 = ev.motion.y - h0;
       }
       break;
-    case EZX_CLOSE:
+    case eet(EZX_CLOSE):
       quit = 1;
       break;
     default:

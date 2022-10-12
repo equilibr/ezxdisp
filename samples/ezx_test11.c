@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
   e = ezx_init(width, height, "this is a ezx_poly_2d test");
 
   npoints = 10;
-  points = malloc(sizeof(ezx_point2d_t)*npoints);
+  points = (ezx_point2d_t*) malloc(sizeof(ezx_point2d_t)*npoints);
 
   for (;;) {
     ezx_wipe(e);

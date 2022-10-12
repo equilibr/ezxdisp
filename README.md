@@ -15,10 +15,31 @@ This repo should just make it easier to clone/fork.
 Only [ezxdisp-0.1.4/](ezxdisp-0.1.4/), [LICENSE](LICENSE), [origin/](origin/), [README.md](README.md) and (top level) [Makefile](Makefile) added to original.  
 [This commit](https://github.com/Hermann-SW/ezxdisp/commit/19c1694abeecaec29724a4820b46772ff059639f) fixed some "unused variable" compiler warnings in 2007 codes.  
 
-Just while we are here, below is copied in screenshot page from the website:  
-[http://morihit.net/ezxdisp/screenshots.html](http://morihit.net/ezxdisp/screenshots.html)  
+## support for C++ / use in IDE
+
+On [forum request](https://forums.raspberrypi.com/viewtopic.php?p=2044260#p2045169) first this repo runs in Geany IDE. And g++ support was added as well (library build with gcc only). These are the installation instructions:  
+
+    cd
+    git clone https://github.com/Hermann-SW/ezxdisp.git
+    cd ezxdisp
+    make libezx.a
+    sudo cp include/ezxdisp.h /usr/local/include
+    sudo cp src/x11/libezx.a /usr/local/lib
+
+In Geany, go to "Build->Set Build Commands" and set "2. Build" command to 
+
+    gcc -Wall -o "%e" "%f" -lezx -lX11 -lm
+
+for gcc or 
+
+    g++ -Wall -o "%e" "%f" -lezx -lX11 -lm -Wno-write-strings
+
+for g++. Open any file from "~/ezxdisp/samples/\*.c" in IDE, press F9 to build without warnings, and then F5 to run.
 
 ## Screenshots of Applications developed using ezxdisp
+
+Just while we are here, below is copied in screenshot page from the website, with two animations added:  
+[http://morihit.net/ezxdisp/screenshots.html](http://morihit.net/ezxdisp/screenshots.html)  
 
 ### Conway's Game of Life
 
@@ -27,6 +48,8 @@ Just while we are here, below is copied in screenshot page from the website:
 ### Solving a TSP Problem using the Lin-Kernighan Algorithm
 
 <kbd>![origin/tsp_LK.png](origin/tsp_LK.png)</kbd>
+
+<kbd>![origin/Peek_2022-10-12_08-49.gif](origin/Peek_2022-10-12_08-49.gif)<kbd>
 
 ### Finding a Steiner Tree
 

@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     
     ezx_next_event(e, &ev);
     switch (ev.type) {
-    case EZX_BUTTON_PRESS:
+    case eet(EZX_BUTTON_PRESS):
       printf("x=%f, y=%f\n", x, y);
       switch (ev.button.b) {
       case EZX_BUTTON_LEFT:

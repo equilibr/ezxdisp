@@ -150,7 +150,7 @@ int pureLKsub(tsplib_t * prob, int i)
 
   int j, k, l;
 
-  flag7 = malloc(sizeof(int) * (dim + 1));
+  flag7 = (int*) malloc(sizeof(int) * (dim + 1));
 
   // STEP 5. Let i = i + 1;
 
@@ -381,7 +381,7 @@ void genInitTour(tsplib_t * prob, int *tour)
   int head[MESH][MESH];
   int *next;
 
-  next = malloc(dim * sizeof(int));
+  next = (int*) malloc(dim * sizeof(int));
 
   for (j = 0; j < dim; j++)
     next[j] = -1;
@@ -432,19 +432,19 @@ void pureLK(tsplib_t * prob, int *result)
 
   dim = prob->dimension;
 
-  tour = calloc(dim, sizeof(int));
-  tourp = calloc(dim + 2, sizeof(int));
+  tour = (int*) calloc(dim, sizeof(int));
+  tourp = (int*) calloc(dim + 2, sizeof(int));
 
-  t = calloc((dim + 1) * 2, sizeof(int));
+  t = (int*) calloc((dim + 1) * 2, sizeof(int));
 
-  x = calloc(dim + 1, sizeof(edge_t));
-  y = calloc(dim + 1, sizeof(edge_t));
-  g = calloc(dim + 1, sizeof(double));
+  x = (edge_t*) calloc(dim + 1, sizeof(edge_t));
+  y = (edge_t*) calloc(dim + 1, sizeof(edge_t));
+  g = (double*) calloc(dim + 1, sizeof(double));
 
-  flag2 = malloc(sizeof(int) * (dim + 1));
-  flag4 = malloc(sizeof(int) * (dim + 1));
-  tflag = calloc((dim + 1), sizeof(int));
-  tflag2 = calloc((dim + 1), sizeof(int));
+  flag2 = (int*) malloc(sizeof(int) * (dim + 1));
+  flag4 = (int*) malloc(sizeof(int) * (dim + 1));
+  tflag = (int*) calloc((dim + 1), sizeof(int));
+  tflag2 = (int*) calloc((dim + 1), sizeof(int));
 
   // STEP 1. Generate the initial tour t
 
@@ -692,7 +692,7 @@ int main(int argc, char *argv[])
 
   //
 
-  tl.coord = malloc(sizeof(tsplib_coord_t) * NCITY);
+  tl.coord = (tsplib_coord_t*) malloc(sizeof(tsplib_coord_t) * NCITY);
   tl.type = TL_TYPE_TSP;
   tl.edge_weight_type = TL_EWT_EUC_2D;
 
@@ -731,7 +731,7 @@ int main(int argc, char *argv[])
 
   //
 
-  tour = malloc(sizeof(int) * tl.dimension);
+  tour = (int*) malloc(sizeof(int) * tl.dimension);
 
   dim = tl.dimension;
 
