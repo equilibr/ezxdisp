@@ -109,7 +109,7 @@ const ezx_color_t ezx_cyan   = {0.5, 0.5, 1};
 const ezx_color_t ezx_brown  = {0.5, 0, 0};
 const ezx_color_t ezx_orange = {1, 0.5, 0};
 
-static const char * const fontname = "5x8";
+static const char * const fontname = "fixed";
 
 static void error_exit(const char *fmt, ...)
 {
