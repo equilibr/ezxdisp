@@ -90,6 +90,7 @@ extern const ezx_color_t ezx_purple, ezx_pink, ezx_cyan, ezx_brown, ezx_orange;
 
 ezx_t *ezx_init(int size_x, int size_y, char *window_name);
 void   ezx_quit(ezx_t *e);
+int    ezx_set_font(ezx_t *e, char *name);  /* does not work yet */
 void   ezx_redraw(ezx_t *e);
 void   ezx_wipe(ezx_t *e);
 void   ezx_wipe_layer(ezx_t *e, int lay);

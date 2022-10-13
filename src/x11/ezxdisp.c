@@ -1031,6 +1031,7 @@ ezx_t *ezx_init(int size_x, int size_y, char *window_name)
   
   e->gc = XCreateGC(e->display, e->top, 0, 0);
   XSetGraphicsExposures(e->display, e->gc, False);
+  XSetFont(e->display, e->gc, e->fontst->fid);
 
   e->wm_protocols = XInternAtom(e->display, "WM_PROTOCOLS", True);
   e->wm_delete_window = XInternAtom(e->display, "WM_DELETE_WINDOW", True);
@@ -1071,6 +1072,29 @@ ezx_t *ezx_init(int size_x, int size_y, char *window_name)
   ezx_redraw(e);
   
   return e;
+}
+
+int ezx_set_font(ezx_t *e, char *name)
+{
+  int ret = 1;
+  XFontStruct *save = e->fontst;
+
+  e->fontst = XLoadQueryFont(e->display, name);
+
+  if (e->fontst == NULL)
+  {
+    fprintf(stderr, "can't load font \"%s\"\n", name);
+    e->fontst = save;
+    ret = 0;
+  }
+  else
+  {
+    XFreeFont(e->display, save);
+
+    XSetFont(e->display, e->gc, e->fontst->fid);
+  }
+
+  return ret;
 }
 
 static inline unsigned int get_state_mask(unsigned int xstate)
