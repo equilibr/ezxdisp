@@ -22,9 +22,7 @@ On [forum request](https://forums.raspberrypi.com/viewtopic.php?p=2044260#p20451
     cd
     git clone https://github.com/Hermann-SW/ezxdisp.git
     cd ezxdisp
-    make libezx.a
-    sudo cp include/ezxdisp.h /usr/local/include
-    sudo cp src/x11/libezx.a /usr/local/lib
+    make install
 
 In Geany, go to "Build->Set Build Commands" and set "2. Build" command to 
 
