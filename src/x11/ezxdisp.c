@@ -16,6 +16,11 @@
 
 #include "ezxdisp.h"
 
+typedef struct ezx_fontsts {
+  XFontStruct *fontst;
+  struct ezx_fontsts *next;
+} ezx_fontsts;
+
 struct ezx_s {
   int size_x, size_y;
   ezx_color_t bgcolor;
@@ -23,7 +28,7 @@ struct ezx_s {
 
   Display     *display;
   Window       top;
-  XFontStruct *fontst;
+  ezx_fontsts *fontsts;
   GC           gc;
   Colormap     cmap;
   XColor       black, white, rgb;
@@ -67,6 +72,7 @@ typedef struct ezx_figures {
   double dx0, dy0, dz0, dx1, dy1, dz1, dr;
   double angle1, angle2;
   char *str;
+  XFontStruct *fontst;
 
   int npoints;
   ezx_point2d_t *points_2d;
@@ -547,6 +553,7 @@ void ezx_str_3d(ezx_t *e, double x0, double y0, double z0, char *str,
   nf->dz0 = z0;
   nf->str = xcalloc(strlen(str) + 1, sizeof(char));
   strcpy(nf->str, str);
+  nf->fontst = e->fontsts->fontst;
   nf->col = *col;
   nf->next = NULL;
 
@@ -562,6 +569,7 @@ void ezx_str_2d(ezx_t *e, int x0, int y0, char *str, const ezx_color_t *col)
   nf->y0 = y0;
   nf->str = xcalloc(strlen(str) + 1, sizeof(char));
   strcpy(nf->str, str);
+  nf->fontst = e->fontsts->fontst;
   nf->col = *col;
   nf->width = 0;
   nf->next = NULL;
@@ -899,13 +907,17 @@ void ezx_redraw(ezx_t *e)
 	  }
 	  break;
 	case FSTR2D:
-	  XDrawString(e->display, e->pixmap, e->gc, f->x0, f->y0, f->str,
-		      strlen(f->str));
+	  {
+	    XSetFont(e->display, e->gc, f->fontst->fid);
+	    XDrawString(e->display, e->pixmap, e->gc, f->x0, f->y0, f->str,
+		        strlen(f->str));
+	  }
 	  break;
 	case FSTR3D:
 	  {
 	    double sx0, sy0;
 	    ezx_c3d_to_2d(e, f->dx0, f->dy0, f->dz0, &sx0, &sy0);
+	    XSetFont(e->display, e->gc, f->fontst->fid);
 	    XDrawString(e->display, e->pixmap, e->gc,
 			(int)sx0 + (e->size_x / 2), (int)sy0 + (e->size_y / 2),
 			f->str, strlen(f->str));
@@ -979,7 +991,13 @@ void ezx_quit(ezx_t *e)
 {
   ezx_wipe(e);
 
-  XFreeFont(e->display, e->fontst);
+  while (e->fontsts != NULL)
+  {
+    ezx_fontsts *el = e->fontsts;
+    e->fontsts = el->next;
+    XFreeFont(e->display, el->fontst);
+    free(el);
+  }
   XFreeGC(e->display, e->gc);
   XCloseDisplay(e->display);
 
@@ -1014,8 +1032,10 @@ ezx_t *ezx_init(int size_x, int size_y, char *window_name)
   XAllocNamedColor(e->display, e->cmap, "black", &e->black, &e->rgb);
   XAllocNamedColor(e->display, e->cmap, "white", &e->white, &e->rgb);
 
-  e->fontst = XLoadQueryFont(e->display, fontname);
-  if (e->fontst == NULL) error_exit("can't load font \"%s\"", fontname);
+  e->fontsts = xcalloc(1, sizeof(ezx_fontsts));
+  e->fontsts->next = NULL;
+  e->fontsts->fontst = XLoadQueryFont(e->display, fontname);
+  if (e->fontsts->fontst == NULL) error_exit("can't load font \"%s\"", fontname);
 
   e->top =
     XCreateSimpleWindow(e->display, DefaultRootWindow(e->display), 0,
@@ -1031,7 +1051,6 @@ ezx_t *ezx_init(int size_x, int size_y, char *window_name)
   
   e->gc = XCreateGC(e->display, e->top, 0, 0);
   XSetGraphicsExposures(e->display, e->gc, False);
-  XSetFont(e->display, e->gc, e->fontst->fid);
 
   e->wm_protocols = XInternAtom(e->display, "WM_PROTOCOLS", True);
   e->wm_delete_window = XInternAtom(e->display, "WM_DELETE_WINDOW", True);
@@ -1077,21 +1096,19 @@ ezx_t *ezx_init(int size_x, int size_y, char *window_name)
 int ezx_set_font(ezx_t *e, char *name)
 {
   int ret = 1;
-  XFontStruct *save = e->fontst;
+  XFontStruct *fstn = XLoadQueryFont(e->display, name);
 
-  e->fontst = XLoadQueryFont(e->display, name);
-
-  if (e->fontst == NULL)
+  if (fstn == NULL)
   {
     fprintf(stderr, "can't load font \"%s\"\n", name);
-    e->fontst = save;
     ret = 0;
   }
   else
   {
-    XFreeFont(e->display, save);
-
-    XSetFont(e->display, e->gc, e->fontst->fid);
+    ezx_fontsts *f = xcalloc(1, sizeof(ezx_fontsts));
+    f->next = e->fontsts;
+    f->fontst = fstn;
+    e->fontsts = f;
   }
 
   return ret;

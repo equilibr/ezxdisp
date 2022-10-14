@@ -18,16 +18,11 @@ void tst(ezx_t *e, int x, int y, char *fontname, const ezx_color_t *col)
 
 int main(int argc, char *argv[])
 {
-  ezx_t *e;
-  
-  e = ezx_init(270, 300, "font test");
+  ezx_t *e = ezx_init(270, 300, "font test");
 
-  for(int i=0; i<11; ++i)
-  {
-    tst(e,50,50+20*i,fonts[i],&ezx_black);
-    ezx_redraw(e);
-    usleep(500000);
-  }
+  for(int i=0; i<11; ++i)  tst(e,50,50+20*i,fonts[i],&ezx_black);
+
+  ezx_redraw(e);
 
   ezx_pushbutton(e, NULL, NULL);
   
