@@ -4,10 +4,6 @@
 #include <limits.h>
 #include <time.h>
 
-#ifdef WIN32
-#include "winlib.h"
-#endif
-
 #include "ezxdisp.h"
 
 #if defined(__cplusplus)

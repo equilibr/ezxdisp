@@ -6,10 +6,6 @@
 #include <sys/time.h>
 #include <time.h>
 
-#ifdef WIN32
-#include "winlib.h"
-#endif
-
 #include "ezxdisp.h"
 
 #define RAD(x) ((x)*M_PI/180.0)

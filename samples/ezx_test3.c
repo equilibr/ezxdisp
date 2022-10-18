@@ -2,10 +2,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#ifdef WIN32
-#include "winlib.h"
-#endif
-
 #include "ezxdisp.h"
 
 void alpha_blending(const ezx_color_t *s0, const ezx_color_t *s1, double alpha,

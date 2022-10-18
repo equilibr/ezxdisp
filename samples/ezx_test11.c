@@ -3,10 +3,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#ifdef WIN32
-#include "winlib.h"
-#endif
-
 #include "ezxdisp.h"
 
 int main(int argc, char *argv[])
