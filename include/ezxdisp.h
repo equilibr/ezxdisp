@@ -14,10 +14,6 @@ extern "C" {
 #endif
 
 
-#ifdef WIN32
-#define main ezx_main
-#endif
-
 #define EZX_NLAYER 8
 
 #define EZX_BUTTON_LEFT      1
