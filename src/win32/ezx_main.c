@@ -68,6 +68,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   int argc, ret;
   char **argv;
 
+  (void)hInstance;
+  (void)hPrevInstance;
+  (void)lpCmdLine;
+  (void)nCmdShow;
+
   bufp = GetCommandLine();
   cmdline = malloc(strlen(bufp) + 1);
   strcpy(cmdline, bufp);
