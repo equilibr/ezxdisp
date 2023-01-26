@@ -794,7 +794,7 @@ void ezx_redraw(ezx_t * e)
   for (p = pf; p != NULL; p = p->next) {
     ezx_figures *f = p->fig;
     double hx, hy, hz;
-    double cl, br;
+    double cl;
     int i;
 
     if (f->dx0 != 0 || f->dy0 != 0 || f->dz0 != 0) {
@@ -838,7 +838,6 @@ void ezx_redraw(ezx_t * e)
 	f->dy0 * (e->eye_y - f->dy1) +
 	f->dz0 * (e->eye_z - f->dz1) < 0)
       cl = 0;
-    br = cl * 0.6 + 0.3;
 
     POINT *points = xmalloc(sizeof(POINT) * f->npoints);
     for (i = 0; i < f->npoints; i++) {
