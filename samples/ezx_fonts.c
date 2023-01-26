@@ -4,10 +4,17 @@
 
 #include "ezxdisp.h"
 
+#ifdef WIN32
+char *fonts[11] = {
+  "Arial", "Consolas", "Courier", "FrankRuehl", "Georgia", "Lucida Console", "Microsoft Sans Serif", "Miriam",
+  "Tahoma", "Times New Roman", "Wingdings"
+};
+#else
 char *fonts[11] = {
   "fixed", "4x7", "5x8", "6x10", "7x13", "8x16", "9x14", "9x15", "9x15bold",
   "10x19", "10x20",
 };
+#endif
 
 void tst(ezx_t *e, int x, int y, char *fontname, const ezx_color_t *col)
 {
@@ -26,5 +33,6 @@ int main(int argc, char *argv[])
 
   ezx_pushbutton(e, NULL, NULL);
   
+  ezx_quit(e);
   return 0;
 }

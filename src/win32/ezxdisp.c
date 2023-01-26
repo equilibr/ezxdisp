@@ -68,6 +68,7 @@ typedef struct ezx_figures {
   double dx0, dy0, dz0, dx1, dy1, dz1, dr;
   double angle1, angle2;
   char  *str;
+  HFONT hFont;
 
   int npoints;
   ezx_point2d_t *points_2d;
@@ -318,6 +319,7 @@ void ezx_wipe(ezx_t *e)
       nf = f->next;
       if (f->type == FSTR3D) free(f->str);
       if (f->type == FSTR2D) free(f->str);
+      if (f->hFont) DeleteObject(f->hFont);
       free(f);
     }
 
@@ -337,6 +339,7 @@ void ezx_wipe_layer(ezx_t *e, int lay)
     nf = f->next;
     if (f->type == FSTR3D) free(f->str);
     if (f->type == FSTR2D) free(f->str);
+    if (f->hFont) DeleteObject(f->hFont);
     free(f);
   }
 
@@ -601,8 +604,11 @@ void ezx_str_3d(ezx_t *e, double x0, double y0, double z0, char *str,
   nf->dz0 = z0;
   nf->str = xcalloc(strlen(str) + 1, sizeof(char));
   strcpy(nf->str, str);
+  nf->hFont = e->hFont;
   nf->col = *col;
   nf->next = NULL;
+  if (e->hFont)
+    e->hFont = NULL;
 
   figure_list_add_tail(e, nf);
 }
@@ -615,10 +621,13 @@ void ezx_str_2d(ezx_t *e, int x0, int y0, char *str, const ezx_color_t *col)
   nf->x0 = x0;
   nf->y0 = y0;
   nf->str = xcalloc(strlen(str) + 1, sizeof(char));
-  strcpy(nf->str, str);
+  strcpy(nf->str, str);  
+  nf->hFont = e->hFont;
   nf->col = *col;
   nf->width = 0;
   nf->next = NULL;
+  if (e->hFont)
+    e->hFont = NULL;
 
   figure_list_add_tail(e, nf);
 }
@@ -956,7 +965,9 @@ void ezx_redraw(ezx_t * e)
 	  break;
 	case FSTR2D:
 	  {
-	    TEXTMETRIC tm;
+      TEXTMETRIC tm;
+      if (f->hFont)
+        SelectObject(e->hdcMem, f->hFont);
 	    GetTextMetrics(hdc, &tm);
 	    SetTextColor(hdc, ecol2rgb(f->col));
 	    TextOut(hdc, f->x0, f->y0 - tm.tmAscent, f->str, strlen(f->str));
@@ -964,8 +975,10 @@ void ezx_redraw(ezx_t * e)
 	  break;
 	case FSTR3D:
 	  {
-	    double sx0, sy0;
-	    TEXTMETRIC tm;
+      double sx0, sy0;
+      TEXTMETRIC tm;
+      if (f->hFont)
+        SelectObject(e->hdcMem, f->hFont);
 	    ezx_c3d_to_2d(e, f->dx0, f->dy0, f->dz0, &sx0, &sy0);
 	    GetTextMetrics(hdc, &tm);
 	    SetTextColor(hdc, ecol2rgb(f->col));
@@ -1350,6 +1363,32 @@ ezx_t *ezx_init(int size_x, int size_y, char *window_name)
   ezx_redraw(e);
 
   return e;
+}
+
+int ezx_set_font(ezx_t *e, char *name)
+{
+  HFONT hFont = e->hFont;
+
+  hFont =
+      CreateFont(
+        12, 0, 0, 0, FW_REGULAR, FALSE, FALSE, FALSE,
+        DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
+        CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+        FIXED_PITCH | FF_MODERN, name);
+
+  if (hFont == NULL)
+  {
+    fprintf(stderr, "can't load font \"%s\"\n", name);
+    return 0;
+  }
+  else
+  {
+    if (e->hFont)
+      DeleteObject(e->hFont);
+    e->hFont = hFont;
+
+    return 1;
+  }
 }
 
 int ezx_sensebutton(ezx_t *e, int *x, int *y)
