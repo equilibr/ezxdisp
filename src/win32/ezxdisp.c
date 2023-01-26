@@ -255,7 +255,7 @@ static ezx_event_t *event_queue_remove_oldest(event_queue_t *q)
   unsigned int min_time;
 
   ret = WaitForMultipleObjects(q->queue_num, q->hEvent, FALSE, INFINITE);
-  if (ret < WAIT_OBJECT_0 || WAIT_OBJECT_0+q->queue_num <= ret)
+  if ((ret == WAIT_FAILED) || (WAIT_OBJECT_0+q->queue_num <= ret))
     win32_error_exit("event_queue_remove_oldest: WaitForMultipleObjects failed");
 
   EnterCriticalSection(&q->cSect);
