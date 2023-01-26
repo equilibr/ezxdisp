@@ -71,7 +71,12 @@ int main(int argc, char *argv[])
     }
 
     ezx_redraw(e);
+    if (ezx_isclosed(e)) break;
+
   }
+
+  ezx_quit(e);
+
   
   return 0;
 }
